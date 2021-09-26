@@ -1,17 +1,42 @@
+.include "cpctelera.h.s"
 .globl cpct_getScreenPtr_asm
+.globl manEntityForAll
 
 sysRenderUpdateOne:
-    
+    pop hl
+
+    ld bc, #5
+    add hl, bc  ;;prevPos1
+
+    ld e, (hl)
+    inc hl      ;;prevPos2
+    ld d, (hl)
+
+    dec hl  ;;prevPos1
+    dec hl  ;;color
+    dec hl  ;;vx
+    dec hl  ;;y
+    dec hl  ;;x
+    dec hl  ;;tipo
+
+    push hl
+
+    ld h, d
+    ld l, e
+    ld (hl), #0
+
+    pop hl
+
     ld de, #0xc000
 
-    inc hl
+    inc hl      ;;x
     ld c, (hl)
 
-    inc hl
+    inc hl      ;;y
     ld b, (hl)
 
-    inc hl
-    inc hl
+    inc hl      ;;vx
+    inc hl      ;;color
     ld a, (hl)
 
     push hl
@@ -21,30 +46,31 @@ sysRenderUpdateOne:
 
     pop af
     
-    ld (hl), a
+    ld (hl), a  ;; Se carga el color en la memoria de video
+    ld d, h
+    ld e, l
 
     pop hl
 
-    dec hl
-    dec hl
-    dec hl
-    dec hl
+    inc hl      ;;prevPos1
+    ld (hl), e
+    inc hl      ;;prevPos2
+    ld (hl), d
+
+
+
+    dec hl  ;;prevPos1
+    dec hl  ;;color
+    dec hl  ;;vx
+    dec hl  ;;y
+    dec hl  ;;x
+    dec hl  ;;tipo
 
 ret
 
 sysRenderUpdate::
 
-        ld a, (hl)      ;; tipo de la entidad
-        or a
+    ld hl, #sysRenderUpdateOne
+    call manEntityForAll
 
-        jr z, salir1
-
-        call sysRenderUpdateOne
-
-        ld bc, #5
-        add hl, bc
-
-    jr sysRenderUpdate
-
-salir1:
-    ret
+ret

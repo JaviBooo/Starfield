@@ -1,34 +1,32 @@
-eTypeInvalid=0x00
-eTypeStar=0x01
-eTypeDead=0x80
-eTypeDefault=0x7f
 
 .globl manEntityDestroy
+.globl manEntityForAll
 
 sysPhysicsUpdateOne:
 
+    pop hl
     inc hl
     ld b, (hl) ;; x
 
     inc hl 
     inc hl  
-    ld a, (hl) ;; vx
+    ld a, (hl) ;; vx negativo
 
     dec hl
     dec hl
     dec hl
 
-    add a, b
+    add a, b ;; vx + x
     cp b
 
-    jr z, amayorqueb
+    jr nc, llamadaDestroy
 
     inc hl
     ld (hl), a
     dec hl
     jr finSysPhysicsUpdateOne
 
-amayorqueb:
+llamadaDestroy:
     call manEntityDestroy
     
 finSysPhysicsUpdateOne:
@@ -36,18 +34,7 @@ finSysPhysicsUpdateOne:
 
 sysPhysicsUpdate::
 
-        ld a, (hl)      ;; tipo de la entidad
-        or a
+    ld hl, #sysPhysicsUpdateOne
+    call manEntityForAll
 
-        jr z, salir
-
-        call sysPhysicsUpdateOne
-
-        ld a, #5
-        add a, l
-        ld l, a
-
-    jr sysPhysicsUpdate
-
-salir:
-    ret
+ret
