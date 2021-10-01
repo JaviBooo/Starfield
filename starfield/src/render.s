@@ -1,6 +1,21 @@
 .include "cpctelera.h.s"
 .globl cpct_getScreenPtr_asm
+.globl cpct_setVideoMode_asm
+.globl cpct_setPALColour_asm
 .globl manEntityForAll
+
+sysRenderInit:
+
+    ld c, #0
+   call cpct_setVideoMode_asm
+
+   cpctm_setBorder_asm HW_BLACK
+
+   ld l, #0
+   ld h, #HW_BLACK
+   call cpct_setPALColour_asm
+
+ret
 
 sysRenderUpdateOne:
     pop hl
